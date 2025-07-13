@@ -1,3 +1,5 @@
+'use client';
+
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
 import React, { ReactNode } from "react";
 
@@ -22,6 +24,46 @@ import {
   Media,
   SmartLink,
 } from "@once-ui-system/core";
+
+// Dynamic Newsletter Content Component - Client Component
+import { useLanguage } from '@/utils/useLanguage';
+
+function DynamicNewsletterContent() {
+  const { content } = useLanguage();
+  
+  return (
+    <CodeBlock
+      marginBottom="16"
+      codes={[
+        {
+          code: `// English content
+const newsletter = {
+    display: true,
+    title: <>Subscribe to ${content.person.firstName}'s Newsletter</>,
+    description: (
+      <>
+        I occasionally share thoughts on backend development, AI applications, and software engineering.
+      </>
+    ),
+};
+
+// Spanish content  
+const newsletter = {
+    display: true,
+    title: <>Suscríbete al boletín de ${content.person.firstName}</>,
+    description: (
+      <>
+        Ocasionalmente comparto ideas sobre desarrollo backend, IA aplicada y tecnología.
+      </>
+    ),
+};`,
+          language: "tsx",
+          label: "src/app/resources/content.js"
+        }
+      ]}
+    />
+  );
+}
 
 type CustomLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
@@ -83,25 +125,32 @@ function slugify(str: string): string {
     .replace(/\-\-+/g, "-"); // Replace multiple - with single -
 }
 
-function createHeading(as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") {
-  const CustomHeading = ({ children, ...props }: Omit<React.ComponentProps<typeof HeadingLink>, 'as' | 'id'>) => {
-    const slug = slugify(children as string);
+function createHeading(level: number) {
+  return function HeadingComponent({ children, ...props }: any) {
+    const variantMap = {
+      1: "display-strong-s",
+      2: "heading-strong-xl",
+      3: "heading-strong-l",
+      4: "heading-strong-m",
+      5: "heading-strong-s",
+      6: "heading-strong-xs",
+    } as const;
+
+    const variant = variantMap[level as keyof typeof variantMap];
+    const asTag = `h${level}` as keyof JSX.IntrinsicElements;
+
     return (
-      <HeadingLink
+      <Heading
+        variant={variant}
+        as={asTag}
         marginTop="24"
         marginBottom="12"
-        as={as}
-        id={slug}
         {...props}
       >
         {children}
-      </HeadingLink>
+      </Heading>
     );
   };
-
-  CustomHeading.displayName = `${as}`;
-
-  return CustomHeading;
 }
 
 function createParagraph({ children }: TextProps) {
@@ -118,8 +167,16 @@ function createParagraph({ children }: TextProps) {
   );
 }
 
-function createInlineCode({ children }: { children: ReactNode }) {
-  return <InlineCode>{children}</InlineCode>;
+function createInlineCode({ children }: any) {
+  return (
+    <InlineCode
+      marginTop="8"
+      marginBottom="12"
+      onBackground="neutral-weak"
+    >
+      {children}
+    </InlineCode>
+  );
 }
 
 function createCodeBlock(props: any) {
@@ -179,6 +236,7 @@ const components = {
   Icon,
   Media,
   SmartLink,
+  DynamicNewsletterContent,
 };
 
 type CustomMDXProps = MDXRemoteProps & {

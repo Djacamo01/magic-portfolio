@@ -7,14 +7,20 @@ import classNames from "classnames";
 import { Background, Column, Flex, Meta, opacity, SpacingToken } from "@once-ui-system/core";
 import { Footer, Header, RouteGuard, Providers } from '@/components';
 import { baseURL, effects, fonts, style, dataStyle, home } from '@/resources';
+import { getCurrentLanguage, getContent } from '@/resources/content';
 
-export async function generateMetadata() {
+export async function generateMetadata({ searchParams }: { searchParams?: { lang?: string } }) {
+  const lang = searchParams?.lang;
+  const currentLang = lang === 'es' ? 'es' : 'en';
+  const { languages } = await import('@/resources/content');
+  const content = languages[currentLang];
+  
   return Meta.generate({
-    title: home.title,
-    description: home.description,
+    title: content.home.title,
+    description: content.home.description,
     baseURL: baseURL,
-    path: home.path,
-    image: home.image,
+    path: content.home.path,
+    image: content.home.image,
   });
 }
 

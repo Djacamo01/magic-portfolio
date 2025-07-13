@@ -7,6 +7,9 @@ import { Fade, Flex, Line, ToggleButton } from "@once-ui-system/core";
 
 import { routes, display, person, about, blog, work, gallery } from "@/resources";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageToggle } from "./LanguageToggle";
+import { NavigationButton } from "./NavigationButton";
+import { useLanguage } from "@/utils/useLanguage";
 import styles from "./Header.module.scss";
 
 type TimeDisplayProps = {
@@ -44,6 +47,7 @@ export default TimeDisplay;
 
 export const Header = () => {
   const pathname = usePathname() ?? "";
+  const { content } = useLanguage();
 
   return (
     <>
@@ -61,7 +65,7 @@ export const Header = () => {
         data-border="rounded"
       >
         <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
-          {display.location && <Flex hide="s">{person.location}</Flex>}
+          {display.location && <Flex hide="s">{content.person.location}</Flex>}
         </Flex>
         <Flex fillWidth horizontal="center">
           <Flex
@@ -75,19 +79,19 @@ export const Header = () => {
           >
             <Flex gap="4" vertical="center" textVariant="body-default-s" suppressHydrationWarning>
               {routes["/"] && (
-                <ToggleButton prefixIcon="home" href="/" selected={pathname === "/"} />
+                <NavigationButton prefixIcon="home" href="/" selected={pathname === "/"} />
               )}
               <Line background="neutral-alpha-medium" vert maxHeight="24" />
               {routes["/about"] && (
                 <>
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-hide"
                     prefixIcon="person"
                     href="/about"
-                    label={about.label}
+                    label={content.about.label}
                     selected={pathname === "/about"}
                   />
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-show"
                     prefixIcon="person"
                     href="/about"
@@ -97,14 +101,14 @@ export const Header = () => {
               )}
               {routes["/work"] && (
                 <>
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-hide"
                     prefixIcon="grid"
                     href="/work"
-                    label={work.label}
+                    label={content.work.label}
                     selected={pathname.startsWith("/work")}
                   />
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-show"
                     prefixIcon="grid"
                     href="/work"
@@ -114,14 +118,14 @@ export const Header = () => {
               )}
               {routes["/blog"] && (
                 <>
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-hide"
                     prefixIcon="book"
                     href="/blog"
-                    label={blog.label}
+                    label={content.blog.label}
                     selected={pathname.startsWith("/blog")}
                   />
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-show"
                     prefixIcon="book"
                     href="/blog"
@@ -131,14 +135,14 @@ export const Header = () => {
               )}
               {routes["/gallery"] && (
                 <>
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-hide"
                     prefixIcon="gallery"
                     href="/gallery"
-                    label={gallery.label}
+                    label={content.gallery.label}
                     selected={pathname.startsWith("/gallery")}
                   />
-                  <ToggleButton
+                  <NavigationButton
                     className="s-flex-show"
                     prefixIcon="gallery"
                     href="/gallery"
@@ -152,6 +156,8 @@ export const Header = () => {
                   <ThemeToggle />
                 </>
               )}
+              <Line background="neutral-alpha-medium" vert maxHeight="24" />
+              <LanguageToggle />
             </Flex>
           </Flex>
         </Flex>
@@ -163,7 +169,7 @@ export const Header = () => {
             textVariant="body-default-s"
             gap="20"
           >
-            <Flex hide="s">{display.time && <TimeDisplay timeZone={person.location} />}</Flex>
+            <Flex hide="s">{display.time && <TimeDisplay timeZone={content.person.location} />}</Flex>
           </Flex>
         </Flex>
       </Flex>
